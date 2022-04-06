@@ -21,6 +21,12 @@ library RMRKLib {
     array.pop();
   }
 
+  function removeItemByIndex(uint256[] storage array, uint256 index) internal {
+    require(index < array.length);
+    array[index] = array[array.length-1];
+    array.pop();
+  }
+
   // Gas saving iterator
   function u_inc(uint i) internal pure returns (uint r) {
     unchecked {
