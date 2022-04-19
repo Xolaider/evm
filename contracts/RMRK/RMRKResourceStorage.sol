@@ -30,6 +30,10 @@ contract RMRKResourceStorage is AccessControl {
         string src; //32+
         string thumb; //32+
         string metadataURI; //32+
+        bytes8 slot;
+        address baseAddress;
+        bytes8[] fixedParts;
+        bytes8[] slotParts;
     }
 
     /* struct baseResource {
@@ -69,7 +73,11 @@ contract RMRKResourceStorage is AccessControl {
         bytes8 _id, //Previously named _id, have seen it called id in RMRK examples / documentation, ask for clarification
         string memory _src,
         string memory _thumb,
-        string memory _metadataURI
+        string memory _metadataURI,
+        bytes8 _slot,
+        address _baseAddress,
+        bytes8[] memory _fixedParts,
+        bytes8[] memory _slotParts
     ) public onlyRole(issuer) {
         require(_id != bytes8(0), "RMRK: Write to zero");
         require(
@@ -80,7 +88,11 @@ contract RMRKResourceStorage is AccessControl {
             id: _id,
             src: _src,
             thumb: _thumb,
-            metadataURI: _metadataURI
+            metadataURI: _metadataURI,
+            slot: _slot,
+            baseAddress: _baseAddress,
+            fixedParts: _fixedParts,
+            slotParts: _slotParts
         });
         _resources[_id] = resource_;
         allResources.push(_id);

@@ -51,6 +51,16 @@ library RMRKLib {
     return (0, false);
   }
 
+  function indexOf(bytes8[] memory A, bytes8 a) internal pure returns (uint256, bool) {
+    uint256 length = A.length;
+    for (uint256 i = 0; i < length; i++) {
+      if (A[i] == a) {
+        return (i, true);
+      }
+    }
+    return (0, false);
+  }
+
   function contains(bytes16[] memory A, bytes16 a) internal pure returns (bool) {
     (, bool isIn) = indexOf(A, a);
     return isIn;
@@ -58,6 +68,11 @@ library RMRKLib {
 
   function containsFromEnd(bytes16[] memory A, bytes16 a) internal pure returns (bool) {
     (, bool isIn) = indexOfFromEnd(A, a);
+    return isIn;
+  }
+
+  function contains(bytes8[] memory A, bytes8 a) internal pure returns (bool) {
+    (, bool isIn) = indexOf(A, a);
     return isIn;
   }
 

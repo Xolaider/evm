@@ -338,19 +338,27 @@ contract RMRKCore is Context, IRMRKCore, RMRKMultiResource, RMRKNesting, RMRKRoy
       bytes8 _id,
       string memory _src,
       string memory _thumb,
-      string memory _metadataURI
+      string memory _metadataURI,
+      bytes8 _slot,
+      address _baseAddress,
+      bytes8[] memory _fixedParts,
+      bytes8[] memory _slotParts
   ) external onlyIssuer {
     _addResourceEntry(
       _id,
       _src,
       _thumb,
-      _metadataURI
+      _metadataURI,
+      _slot,
+      _baseAddress,
+      _fixedParts,
+      _slotParts
       );
   }
 
   function addResourceToToken(
       uint256 _tokenId,
-      IRMRKResourceCore _resourceAddress,
+      IRMRKResourceStorage _resourceAddress,
       bytes8 _resourceId,
       bytes16 _overwrites
   ) external onlyIssuer {

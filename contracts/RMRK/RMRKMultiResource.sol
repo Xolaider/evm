@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.9;
 
-import "./interfaces/IRMRKResourceCore.sol";
-import "./RMRKResourceCore.sol";
+import "./interfaces/IRMRKResourceStorage.sol";
+import "./RMRKResourceStorage.sol";
 import "./library/RMRKLib.sol";
 
 contract RMRKMultiResource {
@@ -12,7 +12,7 @@ contract RMRKMultiResource {
   using RMRKLib for bytes16[];
 
   struct Resource {
-    IRMRKResourceCore resourceAddress;
+    IRMRKResourceStorage resourceAddress;
     bytes8 resourceId;
   }
 
@@ -31,15 +31,11 @@ contract RMRKMultiResource {
   //Double mapping of tokenId to active resources
   mapping(uint256 => mapping(bytes16 => bool)) private _tokenResources;
 
-  //Double mapping of tokenId to active resources -- experimental bytes17 using abi.encodePacked of ID and boolean
-  //Save on a keccak256 call of double mapping
-  mapping(uint256 => bytes17) private _tokenResourcesExperimental;
-
   //mapping of tokenId to all resources by priority
   mapping(uint256 => bytes16[]) private _pendingResources;
 
   // AccessControl roles and nest flag constants
-  RMRKResourceCore public resourceStorage;
+  RMRKResourceStorage public resourceStorage;
 
   string private _fallbackURI;
 
@@ -52,8 +48,9 @@ contract RMRKMultiResource {
   event ResourcePrioritySet(uint256 indexed tokenId);
   event ResourceOverwriteProposed(uint256 indexed tokenId, bytes16 localResourceId, bytes16 overwrites);
   event ResourceOverwritten(uint256 indexed tokenId, bytes16 overwritten);
+
   constructor(string memory resourceName) {
-    resourceStorage = new RMRKResourceCore(resourceName);
+    resourceStorage = new RMRKResourceStorage(resourceName);
   }
 
   ////////////////////////////////////////
@@ -64,20 +61,28 @@ contract RMRKMultiResource {
       bytes8 _id,
       string memory _src,
       string memory _thumb,
-      string memory _metadataURI
+      string memory _metadataURI,
+      bytes8 _slot,
+      address _baseAddress,
+      bytes8[] memory _fixedParts,
+      bytes8[] memory _slotParts
   ) internal virtual {
     resourceStorage.addResourceEntry(
       _id,
       _src,
       _thumb,
-      _metadataURI
+      _metadataURI,
+      _slot,
+      _baseAddress,
+      _fixedParts,
+      _slotParts
       );
     emit ResourceStorageSet(_id);
   }
 
   function _addResourceToToken(
       uint256 _tokenId,
-      IRMRKResourceCore _resourceAddress,
+      IRMRKResourceStorage _resourceAddress,
       bytes8 _resourceId,
       bytes16 _overwrites
   ) internal virtual {
@@ -196,14 +201,14 @@ contract RMRKMultiResource {
       return _resources[resourceId];
   }
 
-  function getResourceObject(IRMRKResourceCore _storage, bytes8 _id) public virtual view returns (IRMRKResourceCore.Resource memory resource) {
+  function getResourceObject(IRMRKResourceStorage _storage, bytes8 _id) public virtual view returns (IRMRKResourceStorage.Resource memory resource) {
       return _storage.getResource(_id);
   }
 
-  function getResObjectByIndex(uint256 _tokenId, uint256 _index) public virtual view returns(IRMRKResourceCore.Resource memory resource) {
+  function getResObjectByIndex(uint256 _tokenId, uint256 _index) public virtual view returns(IRMRKResourceStorage.Resource memory resource) {
       bytes16 localResourceId = getActiveResources(_tokenId)[_index];
       Resource memory _resource = _resources[localResourceId];
-      (IRMRKResourceCore _storage, bytes8 _id) = (_resource.resourceAddress, _resource.resourceId);
+      (IRMRKResourceStorage _storage, bytes8 _id) = (_resource.resourceAddress, _resource.resourceId);
       return getResourceObject(_storage, _id);
   }
 
@@ -211,17 +216,17 @@ contract RMRKMultiResource {
       return _resourceOverwrites[_tokenId][_resId];
   }
 
-  function hashResource16(IRMRKResourceCore _address, bytes8 _id) public pure returns (bytes16) {
+  function hashResource16(IRMRKResourceStorage _address, bytes8 _id) public pure returns (bytes16) {
       return bytes16(keccak256(abi.encodePacked(_address, _id)));
   }
 
   function tokenURI(uint256 tokenId) public view virtual returns (string memory) {
       if (_activeResources[tokenId].length > 0)  {
           Resource memory activeRes = _resources[_activeResources[tokenId][0]];
-          IRMRKResourceCore resAddr = activeRes.resourceAddress;
+          IRMRKResourceStorage resAddr = activeRes.resourceAddress;
           bytes8 resId = activeRes.resourceId;
 
-          IRMRKResourceCore.Resource memory _activeRes = IRMRKResourceCore(resAddr).getResource(resId);
+          IRMRKResourceStorage.Resource memory _activeRes = IRMRKResourceStorage(resAddr).getResource(resId);
           string memory URI = _activeRes.src;
           return URI;
       }

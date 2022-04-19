@@ -7,7 +7,7 @@ import "./AccessControl.sol";
 contract RMRKIssuable is AccessControl {
 
   bytes32 private constant ISSUER_ROLE = keccak256("ISSUER");
-  
+
   constructor() {
     _grantRole(ISSUER_ROLE, msg.sender);
     _setRoleAdmin(ISSUER_ROLE, ISSUER_ROLE);

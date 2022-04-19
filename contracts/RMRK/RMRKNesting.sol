@@ -15,14 +15,18 @@ contract RMRKNesting is Context {
   struct Child {
     uint256 tokenId;
     address contractAddress;
-    uint16 slotEquipped;
-    bytes8 partId;
+    Equipment equipped;
   }
 
   struct RMRKOwner {
     uint256 tokenId;
     address ownerAddress;
     bool isNft;
+  }
+
+  struct Equipment {
+    bytes8 resourceId;
+    bytes8 slotId;
   }
 
   mapping(uint256 => RMRKOwner) internal _RMRKOwners;
@@ -94,11 +98,16 @@ contract RMRKNesting is Context {
     IRMRKNestingInternal childTokenContract = IRMRKNestingInternal(childTokenAddress);
     (address parent, , ) = childTokenContract.rmrkOwnerOf(childTokenId);
     require(parent == address(this), "Parent-child mismatch");
+
+    Equipment memory _equipped = Equipment({
+      resourceId: bytes8(0),
+      slotId: 0
+    });
+
     Child memory child = Child({
        contractAddress: childTokenAddress,
        tokenId: childTokenId,
-       slotEquipped: 0,
-       partId: 0
+       equipped: _equipped
      });
     _addChildToPending(child, parentTokenId);
     emit ChildProposed(parentTokenId);

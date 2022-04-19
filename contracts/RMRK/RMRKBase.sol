@@ -29,6 +29,7 @@ contract RMRKBase is AccessControl {
 
     //bytes8 is sort of arbitrary here--resource IDs in RMRK substrate are bytes8 for reference
     mapping(bytes8 => Base) private bases;
+    mapping(bytes8 => bytes8)
 
     bytes8[] private baseIds;
 

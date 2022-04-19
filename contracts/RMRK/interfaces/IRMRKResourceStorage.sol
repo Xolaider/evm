@@ -2,12 +2,16 @@
 
 pragma solidity ^0.8.0;
 
-interface IRMRKResourceCore {
+interface IRMRKResourceStorage {
     struct Resource {
         bytes8 id; //8 bytes
         string src; //32+
         string thumb; //32+
         string metadataURI; //32+
+        bytes8 slot;
+        address baseAddress;
+        bytes8[] fixedParts;
+        bytes8[] slotParts;
     }
 
     function getResource(bytes8 resourceId)

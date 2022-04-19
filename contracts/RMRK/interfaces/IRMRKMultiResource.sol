@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-import "./IRMRKResourceCore.sol";
+import "./IRMRKResourceStorage.sol";
 
 pragma solidity ^0.8.0;
 
@@ -9,12 +9,16 @@ interface IRMRKMultiResource {
       bytes8 _id,
       string memory _src,
       string memory _thumb,
-      string memory _metadataURI
+      string memory _metadataURI,
+      bytes8 _slot,
+      address _baseAddress,
+      bytes8[] memory _fixedParts,
+      bytes8[] memory _slotParts
   ) external;
 
   function addResourceToToken(
       uint256 _tokenId,
-      IRMRKResourceCore _resourceAddress,
+      IRMRKResourceStorage _resourceAddress,
       bytes8 _resourceId,
       bytes16 _overwrites
   ) external;
