@@ -111,10 +111,10 @@ contract RMRKNestable is Context, ERC165, IRMRKCore, IssuerControl  {
      address ownerAdd;
      uint ownerId;
      (ownerAdd, ownerId) = nftOwnerOf(id);
-
-     if(ownerAdd == address(0)) {
-       return ownerOf(id);
-     }
+//  repeated unnecessary check, because nftOwnerOf contains the require(owner.contractAddress != address(0), "ERC721: owner query for nonexistent token");
+//     if(ownerAdd == address(0)) {
+//       return ownerOf(id);
+//     }
 
      IRMRKCore nft = IRMRKCore(ownerAdd);
 
